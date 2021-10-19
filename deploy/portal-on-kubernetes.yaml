@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloud-native-demystified-portal
+  labels:
+    app: cloud-native-demystified-portal
+spec:
+  selector:
+    matchLabels:
+      app: cloud-native-demystified-portal
+  template:
+    metadata:
+      labels:
+        app: cloud-native-demystified-portal
+    spec:
+      containers:
+      - name: cloud-native-demystified-portal
+        image: cloudnativedemystified.azurecr.io/apps/portal:0.1.0
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cloud-native-demystified-portal-load-balancer
+  labels:
+    app: cloud-native-demystified-portal
+  annotations:
+    # Exposes the portal on cloud-native-demystified-portal.westeurope.cloudapp.azure.com
+    service.beta.kubernetes.io/azure-dns-label-name: cloud-native-demystified-portal
+spec:
+  selector:
+    app: cloud-native-demystified-portal
+  ports:
+    - protocol: TCP
+      port: 80
+  type: LoadBalancer
