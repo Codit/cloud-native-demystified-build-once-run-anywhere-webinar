@@ -16,6 +16,25 @@ spec:
       containers:
       - name: cloud-native-demystified-portal
         image: cloudnativedemystified.azurecr.io/apps/portal:0.1.0
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+          requests:
+            cpu: 25m
+            memory: 64Mi
+        ports:
+        - containerPort: 80
+          protocol: TCP
+          name: http
+        livenessProbe:
+          httpGet:
+            path: /
+            port: http
+        readinessProbe:
+          httpGet:
+            path: /
+            port: http      
 ---
 apiVersion: v1
 kind: Service
