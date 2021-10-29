@@ -6,6 +6,10 @@ Resources for our ["Cloud Native Demystified: Build Once, Run Anywhere!" webinar
 
 ## Deploying to various runtimes
 
+You can easily deploy the application to various runtimes:
+
+![Codit logo](./media/demo-scenario.png)
+
 ### Azure PaaS ☁
 
 You can easily deploy a container to Azure Web App for Containers through the Azure portal.
