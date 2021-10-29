@@ -28,4 +28,8 @@ Bootstrap your cluster to Azure by using `scripts/Bootstrap-Cluster.ps1` by:
 
 After that, you can easily deploy an Azure Web App for Container on your cluster as you typically would, but by using the new custom location.
 
+Here is an overview of the various Arc components:
+
+![Arc Structure](./media/arc-structure.png)
+
 *Learn more on ["Set up an Azure Arc-enabled Kubernetes cluster to run App Service, Functions, and Logic Apps (Preview)"](https://docs.microsoft.com/en-us/azure/app-service/manage-create-arc-environment?tabs=powershell) and ["Create an App Service app on Azure Arc (Preview)"](https://docs.microsoft.com/en-us/azure/app-service/overview-arc-integration).*
