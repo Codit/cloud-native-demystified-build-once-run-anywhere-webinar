@@ -1,0 +1,180 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Response": {
+                "type": "Response",
+                "kind": "http",
+                "inputs": {
+                    "statusCode": 200,
+                    "body": "@variables('responseObject')"
+                },
+                "runAfter": {
+                    "Condition": [
+                        "Succeeded"
+                    ]
+                }
+            },
+            "Condition": {
+                "type": "If",
+                "expression": {
+                    "and": [
+                        {
+                            "equals": [
+                                "@triggerOutputs()?['headers']?['x-format']",
+                                "expand"
+                            ]
+                        }
+                    ]
+                },
+                "actions": {
+                    "Compose_Full": {
+                        "type": "Compose",
+                        "inputs": {
+                            "itemId": "@triggerBody()?['itemId']",
+                            "stock": "@rand(100,200)",
+                            "category": "shoes",
+                            "image": "tihr-30xr-a5s.jpg",
+                            "releaseDate": "2021-06-17T20:30:12.511Z",
+                            "patterns": [
+                                "polka dot",
+                                "striped",
+                                "Canadian flag"
+                            ],
+                            "aggregateRating": {
+                                "bestRating": "100",
+                                "ratingCount": "24",
+                                "ratingValue": "87"
+                            }
+                        },
+                        "runAfter": {},
+                        "trackedProperties": {
+                            "Path": "Full",
+                            "Stock": "@outputs('Compose_Full')?['stock']"
+                        }
+                    },
+                    "Assign_Full": {
+                        "type": "SetVariable",
+                        "inputs": {
+                            "name": "responseObject",
+                            "value": "@outputs('Compose_Full')"
+                        },
+                        "runAfter": {
+                            "Compose_Full": [
+                                "Succeeded"
+                            ]
+                        }
+                    },
+                    "Random_Condition": {
+                        "type": "If",
+                        "expression": {
+                            "and": [
+                                {
+                                    "greaterOrEquals": [
+                                        "@rand(1,5)",
+                                        4
+                                    ]
+                                }
+                            ]
+                        },
+                        "actions": {
+                            "NotFound": {
+                                "type": "Response",
+                                "kind": "http",
+                                "inputs": {
+                                    "statusCode": 404
+                                },
+                                "runAfter": {}
+                            },
+                            "Terminate": {
+                                "type": "Terminate",
+                                "inputs": {
+                                    "runStatus": "Failed",
+                                    "runError": {
+                                        "code": "404",
+                                        "message": "Not Found"
+                                    }
+                                },
+                                "runAfter": {
+                                    "NotFound": [
+                                        "Succeeded"
+                                    ]
+                                }
+                            }
+                        },
+                        "runAfter": {
+                            "Assign_Full": [
+                                "Succeeded"
+                            ]
+                        }
+                    }
+                },
+                "runAfter": {
+                    "Initialize_variable": [
+                        "Succeeded"
+                    ]
+                },
+                "else": {
+                    "actions": {
+                        "Compose_Min": {
+                            "type": "Compose",
+                            "inputs": {
+                                "itemId": "@triggerBody()?['itemId']",
+                                "stock": "@rand(100,200)"
+                            },
+                            "runAfter": {},
+                            "trackedProperties": {
+                                "Path": "Min",
+                                "Stock": "@outputs('Compose_Min')?['stock']"
+                            }
+                        },
+                        "Assign_Min": {
+                            "type": "SetVariable",
+                            "inputs": {
+                                "name": "responseObject",
+                                "value": "@outputs('Compose_Min')"
+                            },
+                            "runAfter": {
+                                "Compose_Min": [
+                                    "Succeeded"
+                                ]
+                            }
+                        }
+                    }
+                }
+            },
+            "Initialize_variable": {
+                "type": "InitializeVariable",
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "responseObject",
+                            "type": "object",
+                            "value": {}
+                        }
+                    ]
+                },
+                "runAfter": {}
+            }
+        },
+        "triggers": {
+            "manual": {
+                "type": "Request",
+                "kind": "Http",
+                "inputs": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "itemId": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {}
+    },
+    "kind": "Stateful"
+}
